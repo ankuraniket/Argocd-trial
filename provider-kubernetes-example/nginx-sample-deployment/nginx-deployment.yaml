@@ -1,0 +1,32 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: sample-nginx
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        # name in manifest is optional and defaults to Object name
+        name: nginx-deployment
+        namespace: sample-namespace
+        labels:
+          app: nginx
+      spec:
+        selector:
+          matchLabels:
+            app: nginx
+          replicas: 2
+        template:
+          metadata:
+            labels:
+              app: nginx
+          spec:
+            containers:
+            - name: nginx
+              image: nginx:1.14.2
+              ports:
+              - containerPort: 80
+  providerConfigRef:
+    name: kube-config

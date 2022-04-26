@@ -1,3 +1,4 @@
 # Argocd-trial
 
-Testing Push
+Repository contains crossplane XRDs for creating EKS kubernetes cluster and provisioning application using 
+provider-kubernetes on the cluster

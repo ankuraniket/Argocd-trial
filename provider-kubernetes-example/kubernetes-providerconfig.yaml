@@ -1,0 +1,12 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: kube-config
+spec:
+  credentials:
+    secretRef:
+      # Secret details returned from cluster provisioning with writeConnectionSecretToRef attribute
+      name: team-a-eks-cluster
+      namespace: crossplane-system
+      key: kubeconfig
+    source: Secret
