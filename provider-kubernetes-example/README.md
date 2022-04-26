@@ -1,7 +1,7 @@
 # Provider kubernetes example
 
 This provider from crossplane can be used to deploy application on worker cluster. It uses kubernetes-providerconfig 
-similar to aws-providerconfig for storing credential reference of working cluster.
+similar to aws-providerconfig for storing credential reference of worker cluster.
 
 Steps to use provider-kubernetes
 1. Install this crossplane provider on the management cluster.
