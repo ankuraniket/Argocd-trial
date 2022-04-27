@@ -1,0 +1,22 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: productcatalog-service
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: productcatalogservice
+        namespace: APM-Beverages
+      spec:
+        type: ClusterIP
+        selector:
+          app: productcatalogservice
+        ports:
+          - name: grpc
+            port: 3550
+            targetPort: 3550
+  providerConfigRef:
+    name: kube-config

@@ -1,0 +1,28 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: frontend-external-service
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: frontend-external
+        namespace: APM-Beverages
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+          service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "5"
+          service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "3"
+          service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
+          external-dns.alpha.kubernetes.io/hostname: demo.
+      spec:
+        type: LoadBalancer
+        selector:
+          app: frontend
+        ports:
+          - name: http
+            port: 81
+            targetPort: 8080
+  providerConfigRef:
+    name: kube-config

@@ -1,0 +1,62 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: payment-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: paymentservice
+        namespace: APM-Beverages
+      spec:
+        selector:
+          matchLabels:
+            app: paymentservice
+        template:
+          metadata:
+            labels:
+              app: paymentservice
+          spec:
+            tolerations:
+            nodeSelector:
+            terminationGracePeriodSeconds: 5
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-paymentservice:433c23881a
+                ports:
+                  - containerPort: 50051
+                env:
+                  - name: PORT
+                    value: "50051"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: SIGNALFX_ENDPOINT_URL
+                    # value: "http://zipkin.default:9411/api/v2/spans"
+                    value: "http://$(NODE_IP):9411/api/v2/spans"
+                  - name: API_TOKEN_FAILURE_RATE
+                    value: "0.75"
+                  - name: SERIALIZATION_FAILURE_RATE
+                    value: "0.0"
+                  - name: SUCCESS_PAYMENT_SERVICE_DURATION_MILLIS
+                    value: "200"
+                  - name: ERROR_PAYMENT_SERVICE_DURATION_MILLIS
+                    value: "500"
+                readinessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:50051" ]
+                livenessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:50051" ]
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 64Mi
+                  limits:
+                    cpu: 200m
+                    memory: 128Mi
+  providerConfigRef:
+    name: kube-config

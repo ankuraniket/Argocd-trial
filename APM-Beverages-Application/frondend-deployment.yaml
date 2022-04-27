@@ -1,0 +1,88 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: frontend-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: frontend
+        namespace: APM-Beverages
+      spec:
+        selector:
+          matchLabels:
+            app: frontend
+        template:
+          metadata:
+            labels:
+              app: frontend
+            annotations:
+              sidecar.istio.io/rewriteAppHTTPProbers: "true"
+          spec:
+            tolerations:
+            nodeSelector:
+            containers:
+              - name: server
+                image: srushtikotak/apm:frontendfinal1
+                ports:
+                  - containerPort: 8080
+                readinessProbe:
+                  initialDelaySeconds: 10
+                  httpGet:
+                    path: "/_healthz"
+                    port: 8080
+                    httpHeaders:
+                      - name: "Cookie"
+                        value: "shop_session-id=x-readiness-probe"
+                livenessProbe:
+                  initialDelaySeconds: 10
+                  httpGet:
+                    path: "/_healthz"
+                    port: 8080
+                    httpHeaders:
+                      - name: "Cookie"
+                        value: "shop_session-id=x-liveness-probe"
+                env:
+                  - name: PORT
+                    value: "8080"
+                  - name: PRODUCT_CATALOG_SERVICE_ADDR
+                    value: "productcatalogservice:3550"
+                  - name: CURRENCY_SERVICE_ADDR
+                    value: "currencyservice:7000"
+                  - name: CART_SERVICE_ADDR
+                    value: "cartservice:7070"
+                  - name: RECOMMENDATION_SERVICE_ADDR
+                    value: "recommendationservice:8080"
+                  - name: SHIPPING_SERVICE_ADDR
+                    value: "shippingservice:50051"
+                  - name: CHECKOUT_SERVICE_ADDR
+                    value: "checkoutservice:5050"
+                  - name: AD_SERVICE_ADDR
+                    value: "adservice:9555"
+                  - name: RUM_REALM
+                  - name: RUM_AUTH
+                  - name: RUM_APP_NAME
+                  - name: RUM_ENVIRONMENT
+                  - name: RUM_DEBUG
+                  - name: ENV_PLATFORM
+                    value: "gcp"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: SIGNALFX_ENDPOINT_URL
+                    # value: "http://zipkin.default:9411/api/v2/spans"
+                    value: "http://$(NODE_IP):9411/api/v2/spans"
+                  - name: SIGNALFX_SERVER_TIMING_CONTEXT
+                    value: "true"
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 64Mi
+                  limits:
+                    cpu: 200m
+                    memory: 128Mi
+  providerConfigRef:
+    name: kube-config

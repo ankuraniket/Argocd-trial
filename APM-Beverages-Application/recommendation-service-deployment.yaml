@@ -1,0 +1,55 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: recommendation-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: recommendationservice
+        namespace: APM-Beverages
+      spec:
+        selector:
+          matchLabels:
+            app: recommendationservice
+        template:
+          metadata:
+            labels:
+              app: recommendationservice
+          spec:
+            tolerations:
+            nodeSelector:
+            terminationGracePeriodSeconds: 5
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-recommendationservice:433c23881a
+                ports:
+                  - containerPort: 8080
+                readinessProbe:
+                  periodSeconds: 5
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:8080" ]
+                livenessProbe:
+                  periodSeconds: 5
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:8080" ]
+                env:
+                  - name: PORT
+                    value: "8080"
+                  - name: PRODUCT_CATALOG_SERVICE_ADDR
+                    value: "productcatalogservice:3550"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 220Mi
+                  limits:
+                    cpu: 200m
+                    memory: 450Mi
+  providerConfigRef:
+    name: kube-config

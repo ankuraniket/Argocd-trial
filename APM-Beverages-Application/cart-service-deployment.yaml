@@ -1,0 +1,74 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: cart-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cartservice
+        namespace: APM-Beverages
+      spec:
+        selector:
+          matchLabels:
+            app: cartservice
+        template:
+          metadata:
+            labels:
+              app: cartservice
+          spec:
+            terminationGracePeriodSeconds: 5
+            tolerations:
+            nodeSelector:
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-cartservice:433c23881a
+                ports:
+                  - containerPort: 7070
+                env:
+                  - name: REDIS_ADDR
+                    value: "redis-cart:6379"
+                  - name: PORT
+                    value: "7070"
+                  - name: LISTEN_ADDR
+                    value: "0.0.0.0"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: SIGNALFX_SERVICE_NAME
+                    value: "cartservice"
+                  - name: SIGNALFX_SERVER_TIMING_CONTEXT
+                    value: "true"
+                  - name: SIGNALFX_TRACE_DEBUG
+                    value: "true"
+                  - name: SIGNALFX_ENV
+                    value: "demo"
+                  - name: EXTERNAL_DB_NAME
+                    value: "Galactus.Postgres"
+                  - name: EXTERNAL_DB_ACCESS_RATE
+                    value: "0.76"
+                  - name: EXTERNAL_DB_MAX_DURATION_MILLIS
+                    value: "750"
+                  - name: EXTERNAL_DB_ERROR_RATE
+                    value: "0.0"
+                resources:
+                  requests:
+                    cpu: 200m
+                    memory: 64Mi
+                  limits:
+                    cpu: 300m
+                    memory: 128Mi
+                readinessProbe:
+                  initialDelaySeconds: 15
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s" ]
+                livenessProbe:
+                  initialDelaySeconds: 15
+                  periodSeconds: 10
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s" ]
+  providerConfigRef:
+    name: kube-config

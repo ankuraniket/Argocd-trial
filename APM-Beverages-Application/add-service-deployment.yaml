@@ -1,0 +1,75 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: add-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: adservice
+        namespace: APM-Beverages
+      spec:
+        selector:
+          matchLabels:
+            app: adservice
+        template:
+          metadata:
+            labels:
+              app: adservice
+          spec:
+            terminationGracePeriodSeconds: 5
+            tolerations:
+            nodeSelector:
+            initContainers:
+              - name: sfx-instrumentation
+                image: quay.io/signalfuse/sfx-zero-config-agent:latest
+                # image: sfx-zero-config-agent
+                # imagePullPolicy: Never
+                volumeMounts:
+                  - mountPath: /opt/sfx/
+                    name: sfx-instrumentation
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-adservice:433c23881a
+                ports:
+                  - containerPort: 9555
+                env:
+                  - name: PORT
+                    value: '9555'
+                  - name: OTEL_EXPORTER_ZIPKIN_SERVICE_NAME
+                    value: adservice
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: OTEL_EXPORTER
+                    value: zipkin
+                  - name: JAVA_TOOL_OPTIONS
+                    value: -javaagent:/opt/sfx/splunk-otel-javaagent-all.jar
+                volumeMounts:
+                  - mountPath: /opt/sfx
+                    name: sfx-instrumentation
+                resources:
+                  requests:
+                    cpu: 200m
+                    memory: 180Mi
+                  limits:
+                    cpu: 300m
+                    memory: 300Mi
+                readinessProbe:
+                  initialDelaySeconds: 60
+                  periodSeconds: 25
+                  exec:
+                    command: [ '/bin/grpc_health_probe', '-addr=:9555' ]
+                livenessProbe:
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  exec:
+                    command: [ '/bin/grpc_health_probe', '-addr=:9555' ]
+            volumes:
+              - emptyDir: { }
+                name: sfx-instrumentation
+  providerConfigRef:
+    name: kube-config
