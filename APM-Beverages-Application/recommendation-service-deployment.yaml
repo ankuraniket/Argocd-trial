@@ -9,7 +9,7 @@ spec:
       kind: Deployment
       metadata:
         name: recommendationservice
-        namespace: APM-Beverages
+        namespace: apm-beverages
       spec:
         selector:
           matchLabels:

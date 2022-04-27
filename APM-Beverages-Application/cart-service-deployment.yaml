@@ -9,7 +9,7 @@ spec:
       kind: Deployment
       metadata:
         name: cartservice
-        namespace: APM-Beverages
+        namespace: apm-beverages
       spec:
         selector:
           matchLabels:

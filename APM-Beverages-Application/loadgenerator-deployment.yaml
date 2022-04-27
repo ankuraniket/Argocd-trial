@@ -9,7 +9,7 @@ spec:
       kind: Deployment
       metadata:
         name: loadgenerator
-        namespace: APM-Beverages
+        namespace: apm-beverages
       spec:
         selector:
           matchLabels:

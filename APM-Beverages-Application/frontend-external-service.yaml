@@ -9,7 +9,7 @@ spec:
       kind: Service
       metadata:
         name: frontend-external
-        namespace: APM-Beverages
+        namespace: apm-beverages
         annotations:
           service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
           service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "5"
