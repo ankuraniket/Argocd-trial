@@ -7,8 +7,8 @@ Prerequisite for running crossplane XRDs on management cluster using Argo CD
 
 1. create a separate namespace for argocd
 kubectl create namespace argocd
-2. Install argocd application 
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+2. Install argocd application using manifest file
+"kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
 3. It runs various pods and services. Get list of services running for argocd
 kubectl get svc -n argocd
 4. To run/login to argocd UI services to local use kubectl port-forward command
