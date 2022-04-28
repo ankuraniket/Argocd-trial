@@ -11,7 +11,6 @@ spec:
         name: frontend-external
         namespace: apm-beverages
         annotations:
-          service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
           service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "5"
           service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "3"
           service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
