@@ -1,0 +1,22 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: shipping-service
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: shippingservice
+        namespace: apm-beverages
+      spec:
+        type: ClusterIP
+        selector:
+          app: shippingservice
+        ports:
+          - name: grpc
+            port: 50051
+            targetPort: 50051
+  providerConfigRef:
+    name: kube-config

@@ -1,0 +1,22 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: currency-service
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: currencyservice
+        namespace: apm-beverages
+      spec:
+        type: ClusterIP
+        selector:
+          app: currencyservice
+        ports:
+          - name: grpc
+            port: 7000
+            targetPort: 7000
+  providerConfigRef:
+    name: kube-config

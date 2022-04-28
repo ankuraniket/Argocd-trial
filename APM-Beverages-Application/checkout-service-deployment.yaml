@@ -1,0 +1,70 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: checkout-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: checkoutservice
+        namespace: apm-beverages
+      spec:
+        selector:
+          matchLabels:
+            app: checkoutservice
+        template:
+          metadata:
+            labels:
+              app: checkoutservice
+          spec:
+            tolerations:
+            nodeSelector:
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-checkoutservice:433c23881a
+                ports:
+                  - containerPort: 5050
+                readinessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:5050" ]
+                livenessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:5050" ]
+                env:
+                  - name: PORT
+                    value: "5050"
+                  - name: PRODUCT_CATALOG_SERVICE_ADDR
+                    value: "productcatalogservice:3550"
+                  - name: SHIPPING_SERVICE_ADDR
+                    value: "shippingservice:50051"
+                  - name: PAYMENT_SERVICE_ADDR
+                    value: "paymentservice:50051"
+                  - name: EMAIL_SERVICE_ADDR
+                    value: "emailservice:5000"
+                  - name: CURRENCY_SERVICE_ADDR
+                    value: "currencyservice:7000"
+                  - name: CART_SERVICE_ADDR
+                    value: "cartservice:7070"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: SIGNALFX_ENDPOINT_URL
+                    # value: "http://zipkin.default:9411/api/v2/spans"
+                    value: "http://$(NODE_IP):9411/api/v2/spans"
+                  - name: MAX_RETRY_ATTEMPTS
+                    value: "20"
+                  - name: RETRY_INITIAL_SLEEP_MILLIS
+                    value: "25"
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 64Mi
+                  limits:
+                    cpu: 200m
+                    memory: 128Mi
+
+  providerConfigRef:
+    name: kube-config

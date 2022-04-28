@@ -1,0 +1,55 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: shipping-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: shippingservice
+        namespace: apm-beverages
+      spec:
+        selector:
+          matchLabels:
+            app: shippingservice
+        template:
+          metadata:
+            labels:
+              app: shippingservice
+          spec:
+            tolerations:
+            nodeSelector:
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-shippingservice:433c23881a
+                ports:
+                  - containerPort: 50051
+                env:
+                  - name: PORT
+                    value: "50051"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: SIGNALFX_ENDPOINT_URL
+                    value: "http://$(NODE_IP):9411/api/v2/spans"
+                    # value: "http://zipkin.default:9411/api/v2/spans"
+                readinessProbe:
+                  periodSeconds: 5
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:50051" ]
+                livenessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:50051" ]
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 64Mi
+                  limits:
+                    cpu: 200m
+                    memory: 128Mi
+
+  providerConfigRef:
+    name: kube-config

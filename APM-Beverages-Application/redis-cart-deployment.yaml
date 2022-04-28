@@ -1,0 +1,52 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: redis-cart-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: redis-cart
+        namespace: apm-beverages
+      spec:
+        selector:
+          matchLabels:
+            app: redis-cart
+        template:
+          metadata:
+            labels:
+              app: redis-cart
+          spec:
+            tolerations:
+            nodeSelector:
+            containers:
+              - name: redis
+                image: redis:alpine
+                ports:
+                  - containerPort: 6379
+                readinessProbe:
+                  periodSeconds: 5
+                  tcpSocket:
+                    port: 6379
+                livenessProbe:
+                  periodSeconds: 5
+                  tcpSocket:
+                    port: 6379
+                volumeMounts:
+                  - mountPath: /data
+                    name: redis-data
+                resources:
+                  limits:
+                    memory: 256Mi
+                    cpu: 125m
+                  requests:
+                    cpu: 70m
+                    memory: 200Mi
+            volumes:
+              - name: redis-data
+                emptyDir: { }
+
+  providerConfigRef:
+    name: kube-config

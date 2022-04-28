@@ -1,0 +1,22 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: redis-cart-service
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: redis-cart
+        namespace: apm-beverages
+      spec:
+        type: ClusterIP
+        selector:
+          app: redis-cart
+        ports:
+          - name: redis
+            port: 6379
+            targetPort: 6379
+  providerConfigRef:
+    name: kube-config

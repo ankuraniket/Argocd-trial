@@ -1,0 +1,56 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: currency-service-deploy
+spec:
+  forProvider:
+    manifest:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: currencyservice
+        namespace: apm-beverages
+      spec:
+        selector:
+          matchLabels:
+            app: currencyservice
+        template:
+          metadata:
+            labels:
+              app: currencyservice
+          spec:
+            tolerations:
+            nodeSelector:
+            terminationGracePeriodSeconds: 5
+            containers:
+              - name: server
+                image: quay.io/signalfuse/microservices-demo-currencyservice:433c23881a
+                ports:
+                  - name: grpc
+                    containerPort: 7000
+                env:
+                  - name: PORT
+                    value: "7000"
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: SIGNALFX_ENDPOINT_URL
+                    # value: "http://zipkin.default:9411/api/v2/spans"
+                    value: "http://$(NODE_IP):9411/api/v2/spans"
+                readinessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:7000" ]
+                livenessProbe:
+                  exec:
+                    command: [ "/bin/grpc_health_probe", "-addr=:7000" ]
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 64Mi
+                  limits:
+                    cpu: 200m
+                    memory: 128Mi
+
+  providerConfigRef:
+    name: kube-config
