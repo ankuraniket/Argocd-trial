@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane-eks-cluster
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ankuraniket/Argocd-trial.git
+    targetRevision: HEAD
+    path: infra
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: eks-worker-cluster
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: false
+      prune: false
