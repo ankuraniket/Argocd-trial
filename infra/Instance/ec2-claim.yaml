@@ -1,0 +1,13 @@
+apiVersion: cloud.accenture.io/v1alpha1
+kind: InstanceClaim
+metadata:
+  name: crossplane-sample-instance
+  namespace: crossplane-instance-test
+spec:
+  parameters:
+    region: us-east-2
+    imageId: ami-0fb653ca2d3203ac1
+    size: small
+  compositionSelector:
+    matchLabels:
+      provider: AWS
