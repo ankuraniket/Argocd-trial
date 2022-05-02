@@ -113,7 +113,7 @@ spec:
                   matchControllerRef: true
             associations:
               - subnetIdSelector:
-                matchControllerRef: true             
+                  matchControllerRef: true             
           providerConfigRef:
             name: example
       patches:
