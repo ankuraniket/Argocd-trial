@@ -4,13 +4,10 @@ Repository contains crossplane XRDs for creating EKS kubernetes cluster and prov
 provider-kubernetes on the cluster
 
 Follow the below steps to configure your AWS account for EKS and application deployment:
-1. Create a secret with your AWS credentials
-export AWS_ACCESS_KEY_ID=
-
-export AWS_SECRET_ACCESS_KEY=
-
-echo "[default] aws_access_key_id = $AWS_ACCESS_KEY_ID aws_secret_access_key = $AWS_SECRET_ACCESS_KEY " >aws-creds.conf
-
+1. Create a secret with your AWS credentials<br />
+export AWS_ACCESS_KEY_ID= <br />
+export AWS_SECRET_ACCESS_KEY= <br />
+echo "[default] aws_access_key_id = $AWS_ACCESS_KEY_ID aws_secret_access_key = $AWS_SECRET_ACCESS_KEY " >aws-creds.conf <br />
 kubectl -n crossplane-system create secret generic aws-creds --from-file creds=./aws-creds.conf
 2. Create Providerconfig with the secret
 kubectl apply -f providerconfig-aws.yaml
