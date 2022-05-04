@@ -121,3 +121,34 @@ spec:
           toFieldPath: metadata.name
         - fromFieldPath: spec.parameters.region
           toFieldPath: spec.forProvider.region
+    - name: securitygroup
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            description: security group for instance
+            groupName: crossplane-sample-instance
+            region: us-east-1
+            vpcIdSelector:
+              matchControllerRef: true
+            ingress:
+            - fromPort: 81
+              toPort: 81
+              ipProtocol: tcp
+              ipRanges:
+              - cidrIp: 0.0.0.0/0
+                description: all ips
+            egress:
+            - fromPort: 0
+              toPort: 0
+              ipProtocol: "-1"
+              ipRanges:
+              - cidrIp: "0.0.0.0/0"
+          providerConfigRef:
+            name: example
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region
