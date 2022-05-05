@@ -81,6 +81,8 @@ spec:
             desiredSize: 1
           instanceTypes:
             - t3.small
+          labels:
+            - isto_containers: aws-eks
     patches:
     - fromFieldPath: spec.id
       toFieldPath: metadata.name
