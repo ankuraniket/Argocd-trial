@@ -10,7 +10,7 @@ spec:
       metadata:
         # name in manifest is optional and defaults to Object name
         name: nginx-deployment
-        namespace: sample-namespace
+        namespace: nginx-namespace
         labels:
           app: nginx
       spec:
@@ -25,7 +25,7 @@ spec:
           spec:
             containers:
             - name: nginx
-              image: nginx:1.20.2
+              image: nginx:1.14.2
               ports:
               - containerPort: 80
   providerConfigRef:

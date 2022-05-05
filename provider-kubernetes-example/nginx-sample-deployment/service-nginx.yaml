@@ -10,7 +10,7 @@ spec:
       metadata:
         # name in manifest is optional and defaults to Object name
         name: nginx-service
-        namespace: sample-namespace
+        namespace: nginx-namespace
       spec:
         selector:
          app: nginx
