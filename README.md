@@ -1,7 +1,6 @@
 # Argocd-trial
 
-Repository contains crossplane XRDs for creating EKS kubernetes cluster and provisioning application using 
-provider-kubernetes on the cluster
+###**Repository contains `crossplane XRDs` for creating EKS kubernetes cluster and provisioning application using provider-kubernetes on the cluster**
 
 Follow the below steps to configure your AWS account for EKS and application deployment:
 1. Create a secret with your AWS credentials<br />
