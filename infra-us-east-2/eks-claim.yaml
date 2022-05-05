@@ -1,0 +1,15 @@
+apiVersion: prodready.cluster/v1alpha1
+kind: ClusterClaim
+metadata:
+  name: team-b-eks
+  labels:
+    cluster-owner: anushka.thachil
+spec:
+  id: team-b-eks
+  compositionSelector:
+    matchLabels:
+      provider: aws-useast2
+      cluster: eks
+  parameters:
+    nodeSize: large
+    minNodeCount: 2
