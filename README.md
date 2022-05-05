@@ -1,6 +1,21 @@
 # Argocd-trial
 
-###**Repository contains `crossplane XRDs` for creating EKS kubernetes cluster and provisioning application using provider-kubernetes on the cluster**
+**Repository contains `crossplane XRDs` for creating EKS kubernetes cluster and provisioning application using provider-kubernetes on the cluster**
+
+Following steps required for crossplane installation in the management kubernetes cluster
+1. use Helm to install stable crossplane release.
+  ```
+  kubectl create namespace crossplane-system
+  helm repo add crossplane-stable https://charts.crossplane.io/stable
+  helm repo update
+  helm install crossplane --namespace crossplane-system crossplane-stable/crossplane 
+  ```
+2. Install crossplane provider-aws either using crossplane cli such as or use kubectl apply -f provider-aws.yaml
+  ```
+  kubectl crossplane install provider crossplane/provider-aws:master
+  ```
+
+
 
 Follow the below steps to configure your AWS account for EKS and application deployment:
 1. Create a secret with your AWS credentials<br />
