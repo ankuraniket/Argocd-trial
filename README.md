@@ -26,7 +26,7 @@ kubectl -n crossplane-system create secret generic aws-creds --from-file creds=.
 2. Create Providerconfig with the secret
 kubectl apply -f providerconfig-aws.yaml
 
-Prerequisite for running crossplane XRDs on management cluster using Argo CD
+Follow steps to setup Argo CD
 
 1. create a separate namespace for argocd
 kubectl create namespace argocd
