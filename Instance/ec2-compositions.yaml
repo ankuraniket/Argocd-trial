@@ -20,6 +20,8 @@ spec:
             imageId: ami-0f9fc25dd2506cf6d #Amazon Linux 2
             subnetIdSelector:
               matchControllerRef: true
+            securityGroupSelector:
+              matchControllerRef: true
           providerConfigRef:
             name: example
       patches:
