@@ -21,7 +21,7 @@ spec:
             subnetIdSelector:
               matchControllerRef: true
             securityGroupSelector:
-              matchControllerRef: true
+              matchControllerRef: true              
           providerConfigRef:
             name: example
       patches:
@@ -98,6 +98,10 @@ spec:
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-gateway"          
         - fromFieldPath: spec.parameters.region
           toFieldPath: spec.forProvider.region      
     - name: routetable
@@ -121,6 +125,10 @@ spec:
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-routetable"
         - fromFieldPath: spec.parameters.region
           toFieldPath: spec.forProvider.region
     - name: securitygroup
@@ -130,7 +138,6 @@ spec:
         spec:
           forProvider:
             description: security group for instance
-            groupName: crossplane-sample-instance
             region: us-east-1
             vpcIdSelector:
               matchControllerRef: true
@@ -152,5 +159,11 @@ spec:
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-securitygroup"
         - fromFieldPath: spec.parameters.region
           toFieldPath: spec.forProvider.region
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.groupName
