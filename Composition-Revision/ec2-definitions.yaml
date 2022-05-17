@@ -1,0 +1,47 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: compositeinstances.cloud.accenture.io
+spec:
+  group: cloud.accenture.io
+  names:
+    kind: CompositeInstance
+    plural: compositeinstances
+  claimNames:
+    kind: InstanceClaim
+    plural: instancesclaim
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              id:
+                type: string
+                description: ID of this vm that other objects will use to refer to it.
+              parameters:
+                type: object
+                description: Instance configuration parameters.
+                properties:
+                  size:
+                    type: string
+                    description: Size of vm
+                    enum:
+                    - small
+                    - medium
+                    - large
+                  imageId:
+                    type: string
+                    description: AMI id for the desired instance.             
+                  region:
+                    type: string
+                    description: Name of AWS region where instance is to be deployed                  
+                required:
+                - size
+            required:
+            - parameters

@@ -1,0 +1,169 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: compositeinstances.cloud.accenture.io
+  labels:
+    provider: AWS
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: cloud.accenture.io/v1alpha1
+    kind: CompositeInstance
+  resources:
+    - name: ec2instance
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1alpha1
+        kind: Instance
+        spec:
+          forProvider:
+            region: us-east-1
+            imageId: ami-0f9fc25dd2506cf6d #Amazon Linux 2
+            subnetIdSelector:
+              matchControllerRef: true
+            securityGroupSelector:
+              matchControllerRef: true              
+          providerConfigRef:
+            name: example
+      patches:
+        - fromFieldPath: spec.parameters.size
+          toFieldPath: spec.forProvider.instanceType
+          transforms:
+            - type: map
+              map:
+                small: t3.small
+                medium: t3.medium
+                large: t3.large
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-instance"
+        - fromFieldPath: spec.parameters.imageId
+          toFieldPath: spec.forProvider.imageId
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region          
+    - name: vpc
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: VPC
+        spec:
+          forProvider:
+            region: us-east-1
+            cidrBlock: 10.0.0.0/16
+            enableDnsSupport: true
+          providerConfigRef:
+            name: example
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-vpc"
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region                
+    - name: public-subnet
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: Subnet       
+        spec:
+          forProvider:
+            region: us-east-1
+            cidrBlock: 10.0.1.0/24
+            vpcIdSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: example
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-subnet"
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region
+    - name: gateway
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: InternetGateway
+        spec:
+          forProvider:
+            region: us-east-1
+            vpcIdSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: example              
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-gateway"          
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region      
+    - name: routetable
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: RouteTable
+        spec:
+          forProvider:
+            region: us-east-1
+            vpcIdSelector:
+              matchControllerRef: true
+            routes:
+              - destinationCidrBlock: 0.0.0.0/0
+                gatewayIdSelector:
+                  matchControllerRef: true
+            associations:
+              - subnetIdSelector:
+                  matchControllerRef: true             
+          providerConfigRef:
+            name: example
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-routetable"
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region
+    - name: securitygroup
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            description: security group for instance
+            region: us-east-1
+            vpcIdSelector:
+              matchControllerRef: true
+            ingress:
+            - fromPort: 81
+              toPort: 81
+              ipProtocol: tcp
+              ipRanges:
+              - cidrIp: 0.0.0.0/0
+                description: all ips
+            egress:
+            - fromPort: 0
+              toPort: 0
+              ipProtocol: "-1"
+              ipRanges:
+              - cidrIp: "0.0.0.0/0"
+          providerConfigRef:
+            name: example
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-securitygroup"
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.groupName

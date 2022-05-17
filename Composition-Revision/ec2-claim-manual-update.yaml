@@ -1,0 +1,16 @@
+apiVersion: cloud.accenture.io/v1alpha1
+kind: InstanceClaim
+metadata:
+  name: crossplane-sample-instance-manual-update
+  namespace: crossplane-instance-test
+spec:
+  parameters:
+    region: us-east-2
+    imageId: ami-0fb653ca2d3203ac1
+    size: small
+  compositionUpdatePolicy: Manual
+  compositionRevisionRef:
+    name: compositeinstances.cloud.accenture.io-wnxgp #Update this according to the revision name created
+  compositionSelector:
+    matchLabels:
+      provider: AWS
