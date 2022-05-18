@@ -1,5 +1,5 @@
 # GKE Okta OIDC configuration 
-GKE supports external identity provider to authenticate kubernetes cluster.This readme file is about how to configure 
+GKE supports external identity provider to authenticate kubernetes cluster. This readme file is about how to configure 
 external identity provider to GKE. By default, GCP Identity and Access Management (IAM) is configured as the identity
 provider for cluster authentication. Here we are going to use OKTA OIDC identity as third-party identity providers.
 
@@ -15,14 +15,14 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
    -> Go to that particular Application and add group assignments so that members of group will have access to the application
    -> Inside Sign-On -> OpenID Connect ID Token, edit the section to add group claim with Groups claim filter.
    ```
-3. Make a note of client id of the application and issuer uri by making this api call
+3. Make a note of client id of the application and issuer uri by making this api call.
    ```
    https://<okta-domain>/.well-known/openid-configuration?client_id=<client_id>
    ```
-4. Login to gcloud cli using "gcloud init" and set the required gcp project
-5. Enable identity provider using this command 
+4. Login to gcloud cli using "gcloud init" and set the required gcp project.
+5. Enable identity provider using this command: 
    ```
-   gcloud container clusters update CLUSTER_NAME --enable-identity-service
+   gcloud container clusters update <CLUSTER_NAME> --enable-identity-service
    ```
 6. Download an update default clientConfig:
    ```
@@ -45,11 +45,11 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
        groupsClaim: groups
        groupPrefix: okta-
    ```
-8. Apply the updated configuration
+8. Apply the updated configuration.
    ```
    kubectl apply -f client-config.yaml
    ```
-9. Create clusterRole and roleBinding based on okta groups
+9. Create clusterRole and roleBinding based on okta groups (samples present in same directory)
    ```
    kubectl apply -f <role/rolebinding>.yaml
    ```
