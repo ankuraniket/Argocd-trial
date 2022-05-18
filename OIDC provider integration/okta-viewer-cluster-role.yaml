@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: okta-viewer
+rules:
+- apiGroups: [""]
+  # The resource type for which access is granted
+  resources: ["secrets", "namespaces", "nodes", "pods"]
+  # The permissions granted by the ClusterRole
+  verbs: ["get", "watch", "list"]

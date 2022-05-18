@@ -1,0 +1,10 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+name: admin
+namespace: demo
+rules:
+- apiGroups: ["*"]
+  # clusterclaims is the name defined crossplane composite resource definitions claimNames/plurals
+  resources: ["pods", "clusterclaims"]
+  verbs: ["get", "watch", "list"]
