@@ -15,6 +15,7 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
    -> Go to that particular Application and add group assignments so that members of group will have access to the application
    -> Inside Sign-On -> OpenID Connect ID Token, edit the section to add group claim with Groups claim filter.
    ```
+   ![img_2.png](img_2.png)
 3. Make a note of client id of the application and issuer uri by making this api call.
    ```
    https://<okta-domain>/.well-known/openid-configuration?client_id=<client_id>
@@ -42,7 +43,8 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
        kubectlRedirectURI: http://localhost:18000/callback
        scopes: openid, email, offline_access, groups
        userClaim: email
-       groupsClaim: groups
+       groupsClaim: groups 
+       # this should match group claim name defined in okta App(see the screenshot from step 2)
        groupPrefix: okta-
    ```
 8. Apply the updated configuration.
