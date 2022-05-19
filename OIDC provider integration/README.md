@@ -33,7 +33,7 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
    ```
    spec:
    name: cluster-name
-   server: https://192.168.0.1:6443
+   server: https://<gke-oidc-envoy-external-IP>:<gke-oidc-envoy-port>
    authentication:
    - name: oidc
      oidc:
@@ -77,10 +77,10 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
 
 12. Make API calls to the GKE 
    ```
-   curl --location --request GET 'https://<gke-oidc-envoy-external-IP>:443/api/v1/nodes' \
+   curl --location --request GET 'https://<gke-oidc-envoy-external-IP>:<gke-oidc-envoy-port>/api/v1/nodes' \
    --header 'Authorization: Bearer <token>
    ```
    OR
    ```
-   kubectl get nodes --token=<id_token> --server=https://<gke-oidc-envoy-external-IP>:443
+   kubectl get nodes --token=<id_token> --server=https://<gke-oidc-envoy-external-IP>:<gke-oidc-envoy-port>
    ```
