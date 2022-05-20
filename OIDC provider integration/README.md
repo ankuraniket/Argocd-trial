@@ -69,13 +69,16 @@ provider for cluster authentication. Here we are going to use OKTA OIDC identity
     curl --location --request GET 'https://<okta-domain>/oauth2/v1/authorize?client_id=<>&response_type=id_token&response_mode=form_post&sessionToken=<>&redirect_uri=http://localhost:8000&scope=openid email groups&state=mystate&nonce={guid}'
     ```
     It will return id_token which will be used as user/group claim to authenticate to GKE `gke-oidc-envoy LoadBalancer (endpoint for OIDC requests)`
+    
+    OR 
+    Use generate-token.ps1 powershell script to generate id_token 
 
-11. Get OIDC requests endpoint.
+12. Get OIDC requests endpoint.
    ```
    kubectl get services -n anthos-identity-service gke-oidc-envoy
    ```
 
-12. Make API calls to the GKE 
+13. Make API calls to the GKE 
    ```
    curl --location --request GET 'https://<gke-oidc-envoy-external-IP>:<gke-oidc-envoy-port>/api/v1/nodes' \
    --header 'Authorization: Bearer <token>
