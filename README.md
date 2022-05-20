@@ -1,6 +1,6 @@
 # Argocd-trial
 
-**Repository contains `crossplane XRDs` for creating EKS kubernetes cluster and provisioning application using provider-kubernetes on the cluster**
+**Repository contains `crossplane XRDs` for creating EKS kubernetes cluster and provisioning application using provider-kubernetes on the cluster. It also contains documentation about crossplane composition revisions and GKE OKTA OIDC Integration**
 
 Following steps required for crossplane installation in the management kubernetes cluster
 1. use Helm to install stable crossplane release.
