@@ -1,0 +1,9 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: okta-admin1
+  namespace: demo1
+rules:
+- apiGroups: ["*"]
+  resources: ["pods", "clusterclaims1"]
+  verbs: ["get", "watch", "list", "create"]
