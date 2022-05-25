@@ -1,0 +1,15 @@
+apiVersion: prodready.cluster/v1alpha1
+kind: ClusterClaim
+metadata:
+  name: team-a-eks
+  labels:
+    cluster-owner: anushka.thachil
+spec:
+  id: team-a-eks
+  compositionSelector:
+    matchLabels:
+      provider: aws-euwest2
+      cluster: eks
+  parameters:
+    nodeSize: small
+    minNodeCount: 2

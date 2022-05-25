@@ -1,0 +1,15 @@
+apiVersion: prodready.cluster1/v1alpha1
+kind: ClusterClaim1
+metadata:
+  name: team-b-eks
+  labels:
+    cluster-owner: cp-anu
+spec:
+  id: team-b-eks
+  compositionSelector:
+    matchLabels:
+      provider: aws-uswest2
+      cluster: eks
+  parameters:
+    nodeSize: small
+    minNodeCount: 2
